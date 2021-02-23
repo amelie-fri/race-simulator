@@ -6,6 +6,7 @@ const path = require('path')
 const app = express()
 const port = 3000
 
+console.log('markus makrus mksfjksdf')
 // setup the ability to see into response bodies
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -24,3 +25,5 @@ app.get('/race', async (req, res) => {
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
+
