@@ -1,28 +1,15 @@
 // PROVIDED CODE BELOW (LINES 1 - 80) DO NOT REMOVE
-
 // The store will hold all information needed globally
-var store = {
-	track_id: undefined,
-	player_id: undefined,
-	race_id: undefined,
-	test: 'hei',
-}
-
-
-
-	// Just some test code :) --------
-	const gummibaum = store.test;
-	console.log(gummibaum);
-	const newtest = {test: 'bonjour'};
-	Object.assign(store, newtest);
-	console.log(store.test);
-	// -------------------------------
+let store = {
+  track_id: undefined,
+  player_id: undefined,
+  race_id: undefined,
+};
 	
-	// Update the store
-	const updateStore = (store, newStore) => {
+// Update the store
+const updateStore = (store, newStore) => {
 		store = Object.assign(store, newStore)
 	}
-
 
 // We need our javascript to wait until the DOM is loaded
 document.addEventListener("DOMContentLoaded", function() {
@@ -40,7 +27,6 @@ async function onPageLoad() {
 			
 
 		getRacers()
-			// .then(racers => console.log(racers))
 			.then((racers) => {
 				const html = renderRacerCars(racers)
 				renderAt('#racers', html)
@@ -100,8 +86,6 @@ async function handleCreateRace() {
 	// TODO - Get player_id and track_id from the store
 
 		const player_id = store.player_id;
-		console.log('player_id')
-		console.log(player_id);
 		
 	
 	// const race = TODO - invoke the API call to create the race, then save the result
@@ -118,10 +102,9 @@ async function handleCreateRace() {
 		const newRaceId = {race_id: await race(player_id, track_id)};
 	// TODO - update the store with the race id
 		updateStore(store, newRaceId);
-		console.log(store);
+		// Fix for the issure with the startRace call
 		const race_id = store.race_id-1;
 		// const race_id = store.race_id;
-		// console.log(race_id);
 	// The race has been created, now start the countdown
 	// TODO - call the async function runCountdown
 		await runCountdown();
@@ -134,17 +117,12 @@ async function handleCreateRace() {
 }
 
 async function runRace(raceID) {
-	// const response = await getRace(raceID)
-	// console.log(response)
 	try {
 	return new Promise(resolve => {
 	// TODO - use Javascript's built in setInterval method to get race info every 500ms
 		let raceInterval = setInterval(async function(){
 			const res = await getRace(raceID)
-			console.log('have a look at my status')
-			console.log(res.status)
 
-	 
 		// TODO - if the race info status property is "in-progress", update the leaderboard by calling:
 
 		if (res.status === "in-progress") {
@@ -189,15 +167,11 @@ async function runCountdown() {
 				document.getElementById("big-numbers").innerHTML = --timer
 				console.log(timer);
 			}
-			// document.getElementById('big-numbers').innerHTML = --timer}, 1000)
 		  },1000)
 			
 	  })
-	// .then(data => {
-	// 	return data;
-	// })
 	}catch(error) {
-		console.log(error);
+		console.error(error);
 	}
 }
 
@@ -216,7 +190,6 @@ function handleSelectPodRacer(target) {
 	// TODO - save the selected racer to the store
 	const newracer = {player_id: target.id};
 	updateStore(store, newracer);
-	console.log(store);
 }
 
 function handleSelectTrack(target) {
@@ -234,7 +207,6 @@ function handleSelectTrack(target) {
 	// TODO - save the selected track id to the store
 	const newtrack = {track_id: target.id};
 	updateStore(store, newtrack);
-	console.log(store);
 	return store.track_id
 
 }
@@ -242,17 +214,13 @@ function handleSelectTrack(target) {
 function handleAccelerate(target) {
 	console.log("accelerate button clicked")
 	// TODO - Invoke the API call to accelerate
-	console.log(store.player_id)
 	// accelerate(parseInt(store.race_id))
-	accelerate(store.race_id)
+	accelerate(store.player_id)
 }
 // HTML VIEWS ------------------------------------------------
 // Provided code - do not remove
 
 function renderRacerCars(racers) {
-	console.log('here in the suspicious function')
-	console.log(racers)
-	console.log(racers[0].driver_name)
 	if (!racers.length) {
 		return `
 			<h4>Loading Racers...</4>
@@ -427,7 +395,7 @@ function createRace(player_id, track_id) {
 		body: JSON.stringify(body)
 	})
 	.then(res => res.json())
-	.then(data => {console.log(data); return data;})
+	// .then(data => {console.log(data); return data;})
 	.catch(err => console.log("Problem with createRace request::", err))
 }
 
@@ -443,8 +411,6 @@ function startRace(id) {
 		method: 'POST',
 		...defaultFetchOpts(),
 	})
-	// .then(res => res.json())
-	.then(res => console.log(res))
 	.catch(err => console.log("Problem with startRace request::", err))
 }
 
