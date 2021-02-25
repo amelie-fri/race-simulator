@@ -209,7 +209,8 @@ function handleAccelerate(target) {
   console.log('accelerate button clicked');
   // TODO - Invoke the API call to accelerate
   // accelerate(parseInt(store.race_id))
-  accelerate(store.player_id);
+  // apparently not play_id but race_id
+  return accelerate(store.race_id-1);
 }
 // HTML VIEWS ------------------------------------------------
 // Provided code - do not remove
