@@ -75,44 +75,30 @@ async function delay(ms) {
 }
 // ^ PROVIDED CODE ^ DO NOT REMOVE
 
-// This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
   // render starting UI
-  const track_id = store.track_id;
-  renderAt('#race', renderRaceStartView(store.track_id));
-
-  // TODO - Get player_id and track_id from the store
-
   const { player_id } = store;
-
-
+  const track_id = store.track_id;
+  if(!track_id || !player_id) {
+    alert(`Please select track and racer to start the race!`);
+    return;
+  }
+  renderAt('#race', renderRaceStartView(store.track_id));
+  // TODO - Get player_id and track_id from the store
   // const race = TODO - invoke the API call to create the race, then save the result
   const race = async (player_id, track_id) => {
     try {
-      const raceData = await createRace(player_id, track_id);
-      // Promise pending
-      const raceid = raceData.ID;
-      return raceid;
-    } catch (error) {
+      
+      store.race_id = (await createRace(player_id, track_id)).ID - 1;
+      await runCountdown()
+      await startRace(store.race_id)
+      await runRace(store.race_id)
+    } catch(error) {
       console.log(error);
     }
     return race;
   };
-  const newRaceId = { race_id: await race(player_id, track_id) };
-  // TODO - update the store with the race id
-  updateStore(store, newRaceId);
-  // Fix for the issure with the startRace call
-  const race_id = store.race_id-1;
-  // const race_id = store.race_id;
-  // The race has been created, now start the countdown
-  // TODO - call the async function runCountdown
-  await runCountdown();
-
-  // TODO - call the async function startRace
-  startRace(race_id);
-
-  // TODO - call the async function runRace
-  runRace(race_id);
+  race(player_id, track_id);
 }
 
 async function runRace(raceID) {
@@ -208,9 +194,7 @@ function handleSelectTrack(target) {
 function handleAccelerate(target) {
   console.log('accelerate button clicked');
   // TODO - Invoke the API call to accelerate
-  // accelerate(parseInt(store.race_id))
-  // apparently not play_id but race_id
-  return accelerate(store.race_id-1);
+  return accelerate(store.race_id);
 }
 // HTML VIEWS ------------------------------------------------
 // Provided code - do not remove
